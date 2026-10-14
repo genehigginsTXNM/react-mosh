@@ -1,32 +1,15 @@
 import { useState } from "react";
-import produce from "immer";
-import Button from "./components/Button";
+import NavBar from "./components/NavBar";
+import Cart from "./components/Cart";
 
 function App() {
-  const [bugs, setBugs] = useState([
-    { id: 1, title: "Bug 1", fixed: false },
-    { id: 2, title: "Bug 2", fixed: false },
-  ]);
+  const [cartItems, setCartItems] = useState(["Product1", "Product2"]);
 
-  const handleClick = () => {
-    setBugs(
-      produce((draft) => {
-        const bug = draft.find((bug) => bug.id === 1);
-        if (bug) bug.fixed = true;
-      }),
-    );
-  };
-
-  return (
-    <div>
-      {bugs.map((bug) => (
-        <p key={bug.id}>
-          {bug.title} {bug.fixed ? "Fixed" : "New"}
-        </p>
-      ))}
-      <Button onClick={handleClick}>Click me</Button>
-    </div>
-  );
+  return <div>
+     <NavBar cartItemsCount= {cartItems.length} />
+     <Cart cartItems={cartItems} onClear={()=> setCartItems([])} />
+     
+  </div>;
 }
 
 export default App;
