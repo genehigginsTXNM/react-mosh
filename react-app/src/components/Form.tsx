@@ -3,13 +3,24 @@ import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+const categories = [
+  "Food",
+  "Utilities",
+  "Entertainment",
+  "Transportation",
+] as const;
+
 const schema = z.object({
-  name: z
+  Description: z
     .string()
-    .min(3, { message: "Name must be at least 3 characters long" }),
-  age: z
-    .number({ invalid_type_error: "Age field is required" })
-    .min(18, { message: "Age must be at least 18" }),
+    .trim()
+    .min(1, { message: "Description must be at least 1 character long" }),
+  Amount: z
+    .number({ invalid_type_error: "Amount should be a number" })
+    .min(1, { message: "Amount must be at least 1" }),
+  Category: z.enum(categories, {
+    errorMap: () => ({ message: "Category is required" }),
+  }),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -43,29 +54,47 @@ const Form = () => {
   return (
     <form action="" onSubmit={handleSubmit(onSubmit)}>
       <div className="mb-3">
-        <label htmlFor="name" className="form-label">
-          Name
+        <label htmlFor="Description" className="form-label">
+          Description
         </label>
         <input
-          {...register("name")}
-          id="name"
+          {...register("Description")}
+          id="Description"
           type="text"
           className="form-control"
         />
-        {errors.name && <p className="text-danger">{errors.name.message}</p>}
+        {errors.Description && (
+          <p className="text-danger">{errors.Description.message}</p>
+        )}
       </div>
       <div className="mb-3">
-        <label htmlFor="age" className="form-label">
-          Age
+        <label htmlFor="Amount" className="form-label">
+          Amount
         </label>
         <input
-          {...register("age", { valueAsNumber: true })}
-          id="age"
+          {...register("Amount", { valueAsNumber: true })}
+          id="Amount"
           type="number"
           className="form-control"
         />
-        {errors.age && <p className="text-danger">{errors.age.message}</p>}
+        {errors.Amount && (
+          <p className="text-danger">{errors.Amount.message}</p>
+        )}
       </div>
+      <div className="form-field">
+        <label htmlFor="Category" className="form-label">
+          Category
+        </label>
+        <select {...register("Category")} className="form-select" id="Category">
+          <option>Choose one…</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <button disabled={!isValid} className="btn btn-primary" type="submit">
         Submit
       </button>
