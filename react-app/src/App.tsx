@@ -1,14 +1,14 @@
 import { useState } from "react";
 import ExpandableText from "./components/ExpandableText";
-import Form from "./components/Form";
+import Form from "./components/ExpenseForm";
+import ExpenseForm from "./components/ExpenseForm";
 
 function App() {
-  
   return (
-  <div>
-    <Form />
-  </div>
-  )
+    <div>
+      <ExpenseForm />
+    </div>
+  );
 }
 
 export default App;
