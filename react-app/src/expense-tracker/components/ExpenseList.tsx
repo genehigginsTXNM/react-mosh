@@ -1,5 +1,6 @@
 import { useState } from "react";
 import categories from "./categories";
+import ExpenseFilter from "./ExpenseFilter";
 
 export interface Expense {
   id: number;
@@ -18,30 +19,12 @@ const ExpenseList = ({ expenses, onDelete }: Props) => {
 
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
-  const visibleExpenses =
-    selectedCategory === ""
-      ? expenses
-      : expenses.filter((expense) => expense.category === selectedCategory);
-
   return (
     <>
       <div className="form-field">
         <label htmlFor="Category" className="form-label">
           Category
         </label>
-        <select
-          className="form-select"
-          id="Category"
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-        >
-          <option>Choose one…</option>
-          {categories.map((category) => (
-            <option id={category} key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
       </div>
       <table className="table">
         <thead>
@@ -53,7 +36,7 @@ const ExpenseList = ({ expenses, onDelete }: Props) => {
           </tr>
         </thead>
         <tbody>
-          {visibleExpenses.map((expense) => (
+          {expenses.map((expense) => (
             <tr key={expense.id}>
               <td>{expense.description}</td>
               <td>${expense.amount.toFixed(2)}</td>
@@ -73,7 +56,7 @@ const ExpenseList = ({ expenses, onDelete }: Props) => {
           <tr>
             <td>Total</td>
             <td>
-              {visibleExpenses
+              {expenses
                 .reduce((acc, expense) => expense.amount + acc, 0)
                 .toFixed(2)}
             </td>
