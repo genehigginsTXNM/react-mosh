@@ -1,8 +1,8 @@
 import { useState } from "react";
 import ExpandableText from "./components/ExpandableText";
 // import Form from "./components/ExpenseForm";
-// import ExpenseForm from "./components/ExpenseForm";
-import ExpenseList from "./expense-tracker/components/ExpenseList";
+import ExpenseForm from "./expense-tracker/components/ExpenseForm";
+import ExpenseList, { Expense } from "./expense-tracker/components/ExpenseList";
 
 const seedExpenses = [
   {
@@ -42,6 +42,11 @@ function App() {
 
   return (
     <div>
+      <ExpenseForm
+        onSubmit={(data) => {
+          setExpenses([...expenses, { ...data, id: Date.now() }]);
+        }}
+      />
       <ExpenseList
         expenses={expenses}
         onDelete={(id) => {
