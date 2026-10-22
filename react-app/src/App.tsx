@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
-import apiClient, { CanceledError } from "./services/api-client";
-
-interface User {
-  id: number;
-  name: string;
-}
+import  { CanceledError } from "./services/api-client";
+import userService, { User } from "./services/user-service";
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
@@ -12,14 +8,10 @@ function App() {
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
-    const controller = new AbortController();
-
     setLoading(true);
 
-    apiClient
-      .get<User[]>("/users", {
-        signal: controller.signal,
-      })
+    const { request, cancel } = userService.getAll<User>();
+    request
       .then((response) => {
         setUsers(response.data);
         setError("");
@@ -31,29 +23,28 @@ function App() {
         setLoading(false);
       });
 
-    return () => controller.abort();
+    return () => cancel();
   }, []);
 
   const deleteUser = (user: User) => {
     const originalUsers = [...users];
     setUsers(users.filter((u) => u.id !== user.id));
-    apiClient.delete("/users/" + user.id).catch((err) => {
+    userService.delete(user.id).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
     });
   };
 
-  const addUser = () => {
+  const addUser = (newUser: User) => {
     const originalUsers = [...users];
-    const newUser = { id: 0, name: "gene" };
     setUsers([newUser, ...users]);
-
-    apiClient
-      .post("/users", newUser)
-      .then(({ data: savedUser }) => setUsers([savedUser, ...users]))
+    userService
+      .create(newUser)
+      .then(({ data: savedUser }) => {
+        setUsers([newUser, ...users]);
+      })
       .catch((err) => {
         setError(err.message);
-        setUsers(originalUsers);
       });
   };
 
@@ -62,17 +53,24 @@ function App() {
     const updatedUser = { ...user, name: user.name + "!" };
     setUsers(users.map((u) => (u.id === user.id ? updatedUser : u)));
 
-    apiClient.patch("/users/" + user.id, updatedUser).catch((err) => {
+    userService.update(updatedUser).catch((err) => {
       setError(err.message);
       setUsers(originalUsers);
     });
   };
 
+  const dummyUser = { id: 0, name: "gene" };
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
-      <button className="btn btn-primary mb3" onClick={addUser}>
+      {}
+      <button
+        className="btn btn-primary mb3"
+        onClick={() => {
+          addUser(dummyUser);
+        }}
+      >
         Add
       </button>
       <ul className="list-group">
