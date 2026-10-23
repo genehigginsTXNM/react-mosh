@@ -1,0 +1,7 @@
+{
+  "html": {
+    "mybtn": "button.btn.btn-primary[type='button']{Click me}",
+    "customcard": "div.card>div.card-body{${1:Content}}",
+    "mycomp": "<MyReactComponent className=\"${1}\" />"
+  }
+}
